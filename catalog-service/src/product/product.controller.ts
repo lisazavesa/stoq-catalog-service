@@ -48,6 +48,23 @@ export class ProductController {
         return this.productService.findAll(search);
     }
 
+    @Get("units")
+    @ApiOperation({ summary: "Получить список единиц измерения" })
+    @ApiOkResponse({ description: "Список единиц измерения" })
+    findAllUnits() {
+        return this.productService.findAllUnits();
+    }
+
+    @Get("units/:id")
+    @ApiOperation({ summary: "Получить единицу измерения по ID" })
+    @ApiParam({ name: "id", description: "ID единицы измерения", example: 1 })
+    @ApiOkResponse({ description: "Найденная единица измерения" })
+    @ApiBadRequestResponse({ description: "Некорректный ID единицы измерения" })
+    @ApiNotFoundResponse({ description: "Единица измерения не найдена" })
+    findOneUnit(@Param("id", ParseIntPipe) id: number) {
+        return this.productService.findOneUnit(id);
+    }
+
     @Get(":id")
     @ApiOperation({ summary: "Получить продукт по ID" })
     @ApiParam({ name: "id", description: "ID продукта", example: 1 })
@@ -62,8 +79,12 @@ export class ProductController {
     @ApiOperation({ summary: "Создать продукт" })
     @ApiBody({ type: CreateProductDto })
     @ApiCreatedResponse({ description: "Продукт успешно создан" })
-    @ApiBadRequestResponse({ description: "Переданы некорректные данные продукта" })
-    @ApiConflictResponse({ description: "Продукт с таким названием уже существует" })
+    @ApiBadRequestResponse({
+        description: "Переданы некорректные данные продукта",
+    })
+    @ApiConflictResponse({
+        description: "Продукт с таким названием уже существует",
+    })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -75,8 +96,12 @@ export class ProductController {
     @ApiOperation({ summary: "Создать несколько продуктов" })
     @ApiBody({ type: [CreateProductDto] })
     @ApiCreatedResponse({ description: "Продукты успешно созданы" })
-    @ApiBadRequestResponse({ description: "Передан некорректный список продуктов" })
-    @ApiConflictResponse({ description: "Продукт с таким названием уже существует" })
+    @ApiBadRequestResponse({
+        description: "Передан некорректный список продуктов",
+    })
+    @ApiConflictResponse({
+        description: "Продукт с таким названием уже существует",
+    })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -107,9 +132,15 @@ export class ProductController {
     @ApiOperation({ summary: "Создать единицу измерения" })
     @ApiBody({ type: CreateUnitDto })
     @ApiCreatedResponse({ description: "Единица измерения успешно создана" })
-    @ApiBadRequestResponse({ description: "Переданы некорректные данные единицы измерения" })
-    @ApiConflictResponse({ description: "Такая единица измерения уже существует" })
+    @ApiBadRequestResponse({
+        description: "Переданы некорректные данные единицы измерения",
+    })
+    @ApiConflictResponse({
+        description: "Такая единица измерения уже существует",
+    })
     createUnit(@Body() dto: CreateUnitDto) {
         return this.productService.createUnit(dto);
     }
+
+    
 }

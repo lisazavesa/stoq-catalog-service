@@ -1,7 +1,66 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["supply", "inventory"]
+}
+
+model Supply {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplyNumber String       @unique @map("supply_number")
+  status       String       @default("received")
+  receivedAt   DateTime     @default(now()) @map("received_at") @db.Timestamptz
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  items        SupplyItem[]
+
+  @@map("supplies")
+  @@schema("supply")
+}
+
+model SupplyItem {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplyId      String   @map("supply_id") @db.Uuid
+  productId     String   @map("product_id") @db.Uuid
+  quantity      Decimal  @db.Decimal
+  shelfLifeDays Int      @map("shelf_life_days")
+  expiresAt     DateTime @map("expires_at") @db.Timestamptz
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  supply        Supply   @relation(fields: [supplyId], references: [id])
+
+  @@index([supplyId])
+  @@map("supply_items")
+  @@schema("supply")
+}
+
+model Batch {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplyId        String       @map("supply_id") @db.Uuid
+  productId       String       @map("product_id") @db.Uuid
+  initialQuantity Decimal      @map("initial_quantity") @db.Decimal
+  expiresAt       DateTime     @map("expires_at") @db.Timestamptz
+  status          String       @default("active")
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  balance         BatchBalance?
+
+  @@index([supplyId])
+  @@index([productId])
+  @@map("batches")
+  @@schema("inventory")
+}
+
+model BatchBalance {
+  batchId           String   @id @map("batch_id") @db.Uuid
+  availableQuantity Decimal  @default(0) @map("available_quantity") @db.Decimal
+  reservedQuantity  Decimal  @default(0) @map("reserved_quantity") @db.Decimal
+  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  batch             Batch    @relation(fields: [batchId], references: [id])
+
+  @@map("batch_balances")
+  @@schema("inventory")
 }
