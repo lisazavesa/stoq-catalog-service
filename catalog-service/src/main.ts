@@ -23,6 +23,8 @@ async function bootstrap() {
     .setDescription("HTTP API для работы с каталогом продуктов.")
     .setVersion("1.0")
     .addTag("Товары", "Операции с товарами каталога")
+    .addTag("Блюда", "Операции с блюдами каталога")
+    .addTag("Рецепты", "Операции с рецептами блюд")
     .addTag("Служебные", "Служебные методы приложения")
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);

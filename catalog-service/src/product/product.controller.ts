@@ -11,7 +11,9 @@ import {
     Query,
 } from "@nestjs/common";
 import {
+    ApiBadRequestResponse,
     ApiBody,
+    ApiConflictResponse,
     ApiCreatedResponse,
     ApiExtraModels,
     ApiNotFoundResponse,
@@ -47,9 +49,10 @@ export class ProductController {
     }
 
     @Get(":id")
-    @ApiOperation({ summary: "Получить продукт по идентификатору" })
-    @ApiParam({ name: "id", description: "Идентификатор продукта", example: 1 })
+    @ApiOperation({ summary: "Получить продукт по ID" })
+    @ApiParam({ name: "id", description: "ID продукта", example: 1 })
     @ApiOkResponse({ description: "Найденный продукт" })
+    @ApiBadRequestResponse({ description: "Некорректный ID продукта" })
     @ApiNotFoundResponse({ description: "Продукт не найден" })
     findOne(@Param("id", ParseIntPipe) id: number) {
         return this.productService.findOne(id);
@@ -59,6 +62,8 @@ export class ProductController {
     @ApiOperation({ summary: "Создать продукт" })
     @ApiBody({ type: CreateProductDto })
     @ApiCreatedResponse({ description: "Продукт успешно создан" })
+    @ApiBadRequestResponse({ description: "Переданы некорректные данные продукта" })
+    @ApiConflictResponse({ description: "Продукт с таким названием уже существует" })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -70,6 +75,8 @@ export class ProductController {
     @ApiOperation({ summary: "Создать несколько продуктов" })
     @ApiBody({ type: [CreateProductDto] })
     @ApiCreatedResponse({ description: "Продукты успешно созданы" })
+    @ApiBadRequestResponse({ description: "Передан некорректный список продуктов" })
+    @ApiConflictResponse({ description: "Продукт с таким названием уже существует" })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -88,8 +95,9 @@ export class ProductController {
 
     @Delete(":id")
     @ApiOperation({ summary: "Удалить продукт" })
-    @ApiParam({ name: "id", description: "Идентификатор продукта", example: 1 })
+    @ApiParam({ name: "id", description: "ID продукта", example: 1 })
     @ApiOkResponse({ description: "Продукт помечен как удалённый" })
+    @ApiBadRequestResponse({ description: "Некорректный ID продукта" })
     @ApiNotFoundResponse({ description: "Продукт не найден" })
     remove(@Param("id", ParseIntPipe) id: number) {
         return this.productService.remove(id);
@@ -99,6 +107,8 @@ export class ProductController {
     @ApiOperation({ summary: "Создать единицу измерения" })
     @ApiBody({ type: CreateUnitDto })
     @ApiCreatedResponse({ description: "Единица измерения успешно создана" })
+    @ApiBadRequestResponse({ description: "Переданы некорректные данные единицы измерения" })
+    @ApiConflictResponse({ description: "Такая единица измерения уже существует" })
     createUnit(@Body() dto: CreateUnitDto) {
         return this.productService.createUnit(dto);
     }
