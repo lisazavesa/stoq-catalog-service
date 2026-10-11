@@ -7,6 +7,7 @@ import {
     ParseArrayPipe,
     ParseIntPipe,
     Post,
+    Put,
     Query,
 } from "@nestjs/common";
 import {
@@ -33,31 +34,31 @@ export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
     @Get()
-    @ApiOperation({ summary: "Получить список товаров" })
+    @ApiOperation({ summary: "Получить список продуктов" })
     @ApiQuery({
         name: "search",
         required: false,
-        description: "Подстрока для поиска по названию товара",
+        description: "Подстрока для поиска по названию продукта",
         example: "мол",
     })
-    @ApiOkResponse({ description: "Список активных товаров" })
+    @ApiOkResponse({ description: "Список активных продуктов" })
     findAll(@Query("search") search?: string) {
         return this.productService.findAll(search);
     }
 
     @Get(":id")
-    @ApiOperation({ summary: "Получить товар по идентификатору" })
-    @ApiParam({ name: "id", description: "Идентификатор товара", example: 1 })
-    @ApiOkResponse({ description: "Найденный товар" })
-    @ApiNotFoundResponse({ description: "Товар не найден" })
+    @ApiOperation({ summary: "Получить продукт по идентификатору" })
+    @ApiParam({ name: "id", description: "Идентификатор продукта", example: 1 })
+    @ApiOkResponse({ description: "Найденный продукт" })
+    @ApiNotFoundResponse({ description: "Продукт не найден" })
     findOne(@Param("id", ParseIntPipe) id: number) {
         return this.productService.findOne(id);
     }
 
-    @Post()
-    @ApiOperation({ summary: "Создать товар" })
+    @Put()
+    @ApiOperation({ summary: "Создать продукт" })
     @ApiBody({ type: CreateProductDto })
-    @ApiCreatedResponse({ description: "Товар успешно создан" })
+    @ApiCreatedResponse({ description: "Продукт успешно создан" })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -65,10 +66,10 @@ export class ProductController {
         return this.productService.create(createProductDto);
     }
 
-    @Post("few")
-    @ApiOperation({ summary: "Создать несколько товаров" })
+    @Put("few")
+    @ApiOperation({ summary: "Создать несколько продуктов" })
     @ApiBody({ type: [CreateProductDto] })
-    @ApiCreatedResponse({ description: "Товары успешно созданы" })
+    @ApiCreatedResponse({ description: "Продукты успешно созданы" })
     @ApiNotFoundResponse({
         description: "Указанная единица измерения не найдена",
     })
@@ -86,15 +87,15 @@ export class ProductController {
     }
 
     @Delete(":id")
-    @ApiOperation({ summary: "Удалить товар" })
-    @ApiParam({ name: "id", description: "Идентификатор товара", example: 1 })
-    @ApiOkResponse({ description: "Товар помечен как удалённый" })
-    @ApiNotFoundResponse({ description: "Товар не найден" })
+    @ApiOperation({ summary: "Удалить продукт" })
+    @ApiParam({ name: "id", description: "Идентификатор продукта", example: 1 })
+    @ApiOkResponse({ description: "Продукт помечен как удалённый" })
+    @ApiNotFoundResponse({ description: "Продукт не найден" })
     remove(@Param("id", ParseIntPipe) id: number) {
         return this.productService.remove(id);
     }
 
-    @Post("units")
+    @Put("units")
     @ApiOperation({ summary: "Создать единицу измерения" })
     @ApiBody({ type: CreateUnitDto })
     @ApiCreatedResponse({ description: "Единица измерения успешно создана" })

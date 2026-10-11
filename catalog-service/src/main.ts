@@ -31,6 +31,6 @@ async function bootstrap() {
     customSiteTitle: "Документация API сервиса каталога",
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3002);
 }
 bootstrap();
