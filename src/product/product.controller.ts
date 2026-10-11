@@ -24,6 +24,7 @@ import {
 
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { CreateUnitDto } from "./dto/create-unit.dto";
 
 @ApiTags("Товары")
 @ApiExtraModels(CreateProductDto)
@@ -50,40 +51,39 @@ export class ProductController {
     @ApiOkResponse({ description: "Найденный товар" })
     @ApiNotFoundResponse({ description: "Товар не найден" })
     findOne(@Param("id", ParseIntPipe) id: number) {
-      return this.productService.findOne(id);
+        return this.productService.findOne(id);
     }
 
-  @Post()
-  @ApiOperation({ summary: "Создать товар" })
-  @ApiBody({ type: CreateProductDto })
-  @ApiCreatedResponse({ description: "Товар успешно создан" })
-  @ApiNotFoundResponse({
-    description: "Указанная единица измерения не найдена",
-  })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
-  }
+    @Post()
+    @ApiOperation({ summary: "Создать товар" })
+    @ApiBody({ type: CreateProductDto })
+    @ApiCreatedResponse({ description: "Товар успешно создан" })
+    @ApiNotFoundResponse({
+        description: "Указанная единица измерения не найдена",
+    })
+    create(@Body() createProductDto: CreateProductDto) {
+        return this.productService.create(createProductDto);
+    }
 
-
-  @Post('few')
-  @ApiOperation({ summary: "Создать несколько товаров" })
-  @ApiBody({ type: [CreateProductDto] })
-  @ApiCreatedResponse({ description: "Товары успешно созданы" })
-  @ApiNotFoundResponse({
-    description: "Указанная единица измерения не найдена",
-  })
-  createMany(
-    @Body(
-      new ParseArrayPipe({
-        items: CreateProductDto,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-      })
-    )
-    createProductDtos: CreateProductDto[]
-  ) {
-    return this.productService.createMany(createProductDtos);
-  }
+    @Post("few")
+    @ApiOperation({ summary: "Создать несколько товаров" })
+    @ApiBody({ type: [CreateProductDto] })
+    @ApiCreatedResponse({ description: "Товары успешно созданы" })
+    @ApiNotFoundResponse({
+        description: "Указанная единица измерения не найдена",
+    })
+    createMany(
+        @Body(
+            new ParseArrayPipe({
+                items: CreateProductDto,
+                whitelist: true,
+                forbidNonWhitelisted: true,
+            }),
+        )
+        createProductDtos: CreateProductDto[],
+    ) {
+        return this.productService.createMany(createProductDtos);
+    }
 
     @Delete(":id")
     @ApiOperation({ summary: "Удалить товар" })
@@ -92,5 +92,13 @@ export class ProductController {
     @ApiNotFoundResponse({ description: "Товар не найден" })
     remove(@Param("id", ParseIntPipe) id: number) {
         return this.productService.remove(id);
+    }
+
+    @Post("units")
+    @ApiOperation({ summary: "Создать единицу измерения" })
+    @ApiBody({ type: CreateUnitDto })
+    @ApiCreatedResponse({ description: "Единица измерения успешно создана" })
+    createUnit(@Body() dto: CreateUnitDto) {
+        return this.productService.createUnit(dto);
     }
 }

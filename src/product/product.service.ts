@@ -6,6 +6,7 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Prisma } from "@prisma/client";
+import { CreateUnitDto } from "./dto/create-unit.dto";
 
 @Injectable()
 export class ProductService {
@@ -93,5 +94,26 @@ export class ProductService {
             where: { id },
             data: { isDeleted: true },
         });
+    }
+
+    async createUnit(dto: CreateUnitDto) {
+        try {
+            return await this.prisma.unit.create({
+                data: {
+                    name: dto.name,
+                    shortName: dto.shortName,
+                },
+            });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === "P2002") {
+                    (error.meta?.target as string[])?.join(", ") ?? "поле";
+                    throw new ConflictException(
+                        "Такая единица измерения уже существует",
+                    );
+                }
+            }
+            throw error;
+        }
     }
 }
