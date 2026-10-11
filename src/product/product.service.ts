@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class ProductService {
@@ -43,23 +48,31 @@ export class ProductService {
     }
 
     async create(data: CreateProductDto) {
-        const unit = await this.prisma.unit.findUnique({
-            where: { id: data.unitId },
-        });
+        try {
+            return await this.prisma.product.create({
+                data: {
+                    name: data.name,
+                    unitId: data.unitId,
+                },
+                include: { unit: true },
+            });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === "P2002") {
+                    throw new ConflictException(
+                        "Продукт с таким названием уже существует",
+                    );
+                }
 
-        if (!unit) {
-            throw new NotFoundException("Единица измерения не найдена");
+                if (error.code === "P2003") {
+                    throw new NotFoundException(
+                        "Указанная единица измерения не найдена",
+                    );
+                }
+            }
+
+            throw error;
         }
-
-        return this.prisma.product.create({
-            data: {
-                name: data.name.trim(),
-                unitId: data.unitId,
-            },
-            include: {
-                unit: true,
-            },
-        });
     }
 
     async createMany(data: CreateProductDto[]) {

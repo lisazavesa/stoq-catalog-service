@@ -44,6 +44,12 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Документация API
+
+После запуска сервиса интерактивная Swagger-документация доступна по адресу
+[http://localhost:3000/api](http://localhost:3000/api). Описание в формате OpenAPI
+доступно по адресу [http://localhost:3000/api-json](http://localhost:3000/api-json).
+
 ## Run tests
 
 ```bash
